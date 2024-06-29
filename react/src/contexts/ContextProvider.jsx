@@ -191,7 +191,7 @@ export const ContextProvider = ({ children }) => {
     email: "tom@example.com",
   });
 
-  const [userToken, setUserToken] = useState("token-available");
+  const [userToken, setUserToken] = useState("");
   const [surveys, setSurveys] = useState(tmpSurveys);
 
   return (
