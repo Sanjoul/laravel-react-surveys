@@ -6,8 +6,7 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
-  const token = "123"; //TODO
-  config.headers.Authorization = `Bearer${token}`;
+  config.headers.Authorization = `Bearer ${localStorage.getItem("TOKEN")}`;
   return config;
 });
 
@@ -17,7 +16,7 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      router.navigate("/login");
+      router.navigate("login");
       return error;
     }
     throw error;

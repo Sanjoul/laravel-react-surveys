@@ -7,12 +7,23 @@ use App\Http\Requests\SignupRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    public function signup(SignupRequest $request)
+    public function signup(Request $request)
     {
-        $data = $request->validated();
+
+        $data = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email|string|unique:users,email',
+            'password' => [
+                'required',
+                'confirmed',
+                Password::min(8)->mixedCase()->numbers()->symbols()
+
+            ]
+        ]);
 
         $user = User::create([
             'name' => $data['name'],
@@ -20,7 +31,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
 
         ]);
-        $token = $user->createToken('main')->plainTextToken;
+        $token = $user->createToken($request->email)->plainTextToken;
 
         return response()->json([
             "user" => $user,
@@ -43,7 +54,7 @@ class AuthController extends Controller
 
         return response()->json([
             "user" => $user,
-            "Token" => $token,
+            "token" => $token,
         ], 200);
     }
     public function logout(Request $request)

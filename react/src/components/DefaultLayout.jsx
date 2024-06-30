@@ -17,6 +17,7 @@ import {
 import { NavLink, Navigate, Outlet } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import { useContext } from "react";
+import axiosClient from "../axios";
 
 const navigation = [
   { name: "Dashboard", href: "/" },
@@ -29,7 +30,8 @@ function classNames(...classes) {
 }
 
 export default function DefaultLayout() {
-  const { currentUser, userToken, SetUserToken } = useStateContext();
+  const { currentUser, userToken, setUserToken, setCurrentUser } =
+    useStateContext();
 
   if (!userToken) {
     return <Navigate to="login" />;
@@ -37,8 +39,13 @@ export default function DefaultLayout() {
 
   const logout = (ev) => {
     ev.preventDefault();
-    console.log("logout");
+
+    axiosClient.post("/logout").then((res) => {
+      setCurrentUser({});
+      setUserToken(null);
+    });
   };
+
   return (
     <>
       <div className="min-h-full">
